@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freedom Wall</title>
+</head>
+<body>
+
+<h2 style="text-align: center;">Freedom Wall</h2>
+<form id="freedomWallForm">
+    <textarea id="message" placeholder="Write your message here..." rows="5" cols="30"></textarea><br>
+    <button type="submit">Post Message</button>
+</form>
+
+<script>
+    // Facebook SDK integration
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId     : 'https://www.facebook.com/gmznprst.2006?mibextid=JRoKGi', // Replace with your Facebook App ID
+            cookie     : true,
+            xfbml      : true,
+            version    : 'v19.0' // Use the latest version
+        });
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    // Handling form submission
+    document.getElementById('freedomWallForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        var message = document.getElementById('message').value;
+
+        FB.login(function(response) {
+            if (response.authResponse) {
+                // User authorized, proceed with posting the message
+                FB.api(
+                    '/me/feed',
+                    'POST',
+                    { message: message },
+                    function(response) {
+                        if (response && !response.error) {
+                            alert('Message posted successfully!');
+                        } else {
+                            alert('Error posting message.');
+                        }
+                    }
+                );
+            } else {
+                alert('User canceled login or did not fully authorize.');
+            }
+        }, {scope: 'publish_actions'}); // Ensure you have the correct permissions
+    });
+</script>
+
+</body>
+</html>
